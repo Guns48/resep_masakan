@@ -1,63 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DetailScreen extends StatefulWidget {
-  const DetailScreen({Key? key}) : super(key: key);
+import '../cubit/resep_makanan_cubit.dart';
+
+class DetailResepMakananScreen extends StatefulWidget {
+  // Tambahkan parameter keyResepMakanan untuk menerima key dari ResepMakananScreen
+  final String? keyResepMakanan;
+  final String? titleResepMakanan;
+  final String? thumbResepMakanan;
+  const DetailResepMakananScreen({
+    Key? key,
+    this.keyResepMakanan,
+    this.titleResepMakanan,
+    this.thumbResepMakanan,
+  }) : super(key: key);
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
+  State<DetailResepMakananScreen> createState() =>
+      _DetailResepMakananScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailResepMakananScreenState extends State<DetailResepMakananScreen> {
+  // Tambahkan cubit->ResepMakananCubit di screen->DetailResepMakananScreen
+  final ResepMakananCubit resepMakananCubit = ResepMakananCubit();
+
+  // Tambahkan initState
+  @override
+  void initState() {
+    // Panggil getDetailDataResepMakanan yang ada di ResepMakananCubit
+    resepMakananCubit.getDetailDataResepMakanan(widget.keyResepMakanan!);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Resep Tumis Kacang Panjang Jamur, Untuk Sahur"),
+        title: Text(widget.titleResepMakanan!),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 20.0,
-              horizontal: 18,
-            ),
-            child: Image.network(
-                'https://www.bango.co.id/gfx/recipes/temp_thumb-1573121581.jpg'),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 18.0,
-              vertical: 20.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text("Resep Tumis Kacang Panjang Jamur, Untuk Sahur"),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 18),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("4 Porsi"),
-                Text("30Mnt"),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Tumis kacang panjang merupakan  masakan sederhana dan enak.",
+      body: BlocBuilder<ResepMakananCubit, ResepMakananState>(
+        bloc: resepMakananCubit,
+        builder: (context, state) {
+          if (state is ResepMakananInitial) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return ListView(
+            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+            children: [
+              Image.network(widget.thumbResepMakanan!),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  resepMakananCubit.detailResepMakananModel.results!.title!,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    resepMakananCubit
+                        .detailResepMakananModel.results!.servings!,
+                  ),
+                  Text(
+                    resepMakananCubit.detailResepMakananModel.results!.times!,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                    resepMakananCubit.detailResepMakananModel.results!.desc!),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

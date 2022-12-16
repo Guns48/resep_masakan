@@ -1,5 +1,5 @@
-import 'package:resep_masakan/screen/resep_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:resep_masakan/screen/resep_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,15 +8,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Resep Masakan',
+      title: 'Resep Makanan',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ResepScreen(),
+      home: const ResepMakananScreen(),
     );
   }
 }
